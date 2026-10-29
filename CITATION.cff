@@ -1,0 +1,12 @@
+cff-version: 1.2.0
+message: "If you use this simulation, please cite it as below."
+title: "Years and moments — Fast clock: What happens day to day? Young adults online, moment by moment. Monte Carlo power simulation"
+version: 0.1.0
+date-released: 2026-10-30
+license: MIT
+authors:
+  - family-names: Stavropoulos
+    given-names: Vasileios
+    affiliation: RMIT University
+    orcid: "https://orcid.org/0000-0001-6964-4662"
+keywords: [power analysis, Monte Carlo, DSEM, ecological momentary assessment, measurement burst, digital wellbeing]

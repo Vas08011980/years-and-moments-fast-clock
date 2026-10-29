@@ -1,0 +1,18 @@
+parameter,value(s) simulated,source,note
+Prompts per burst,56 (14 days x 4 prompts),C1 design (3 brief check-ins + 1 evening report per day),Lags are computed only between prompts on the same day
+Compliance (mean),0.78,"Wen, Schneider, Stone & Spruijt-Metz (2017) J Med Internet Res 19(4):e132: pooled youth EMA compliance 78.26% (95% CI 75.49-80.78), 36 studies",Literature central value
+Compliance (mean),0.67,"Wen et al. (2017): clinical youth samples with 4-5 prompts/day, 66.94% (95% CI 53.50-78.09)",Literature lower value matching this design's prompt frequency
+Compliance (mean),0.60,Applicant's 2025 CatholicCare EMA study (as stated in C1),Conservative bound; persons vary around the mean (Beta distribution; SD 0.15)
+Average within-person effect (standardised),"0.05, 0.10, 0.15","Beyens et al. (2020) Sci Rep 10:10763: no average effect of passive use; average effect of active use B = 0.07; 44% of adolescents with person-specific effects between -0.10 and 0.10",0.05 = near-null typical of the literature; 0.10 = small; 0.15 = upper plausible
+Between-person SD of that effect,"0.10, 0.20","Beyens et al. (2020): person-specific effects of passive use ranged from -0.24 to 0.68 (Instagram: -0.48 to 0.27)",0.20 approximates Beyens-level heterogeneity; 0.10 = modest heterogeneity
+Mood autoregression,0.30,Design assumption (conventional value for momentary affect),Replace with pilot estimate (months 7-12)
+Mood ICC (between-person share),0.40,Design assumption,Replace with pilot estimate
+Exposure (x) autoregression and ICC,"0.30, 0.40",Design assumption,
+Persons enrolled,"250, 400, 550",C1 design (N = 400 enrolled),
+Retention across 4 bursts,"100%, 92%, 84%, 75%",C1 design (~400 enrolled -> ~300 retained),Monotone dropout
+Stability of person slopes across bursts,r = 0.70,Design assumption,Lower stability makes the bridge test harder
+Stability of full-scale wellbeing (6 months),0.60,Design assumption,
+Bridge effect (standardised effect of a person's daily slope on next-burst wellbeing),"0.10, 0.20, 0.30",No direct literature; sensitivity range,Reported as a sensitivity analysis rather than as an expected value
+Significance criterion,two-sided alpha = .05 (|z| > 1.96); slope variance by likelihood-ratio test with 50:50 chi-square mixture,Standard,
+Replications per cell,150,,Monte Carlo SE of a power estimate near .80 is about .03
+Reference for DSEM sample-size guidance,,"Schultzberg & Muthén (2018) Struct Equ Modeling 25(4):495-515, doi:10.1080/10705511.2017.1392862",Used to choose the Mplus check cells
