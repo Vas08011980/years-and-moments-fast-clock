@@ -1,0 +1,42 @@
+TITLE:  Fast clock, burst 1: DSEM Monte Carlo power (one grid cell).
+        Template values in [[ ]] are filled by R/run_mplus_check.R
+        (MplusAutomation). Not run in the sandbox: Mplus is licensed software.
+
+MONTECARLO:
+  NAMES = y x;
+  NOBSERVATIONS = [[nobs]];        ! persons x 56 prompts (14 days x 4)
+  NCSIZES = 1;
+  CSIZES = [[n]] (56);
+  NREPS = 200;
+  SEED = 20261030;
+  LAGGED = y(1) x(1);
+  PATMISS = y([[miss]]) x([[miss]]);   ! missing prompts = 1 - compliance
+  PATPROBS = 1;
+
+ANALYSIS:
+  TYPE = TWOLEVEL RANDOM;
+  ESTIMATOR = BAYES;
+  PROCESSORS = 2;
+  BITERATIONS = (2000);
+
+MODEL POPULATION:
+  %WITHIN%
+  s | y ON x&1;          ! person-specific carry-over of digital exposure on mood
+  y ON y&1*.30;          ! mood inertia
+  x ON x&1*.30;
+  y*[[wres]];  x*.55;
+  %BETWEEN%
+  y*.40;  x*.40;
+  [s*[[b]]];  s*[[vs]];  ! average effect and between-person variance (sd_b^2)
+
+MODEL:
+  %WITHIN%
+  s | y ON x&1;
+  y ON y&1*.30;
+  x ON x&1*.30;
+  y*[[wres]];  x*.55;
+  %BETWEEN%
+  y*.40;  x*.40;
+  [s*[[b]]];  s*[[vs]];
+
+OUTPUT: TECH1;

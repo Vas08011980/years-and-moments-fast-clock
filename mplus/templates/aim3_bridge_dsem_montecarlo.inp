@@ -1,0 +1,45 @@
+TITLE:  Bridge check (Aim 3): latent person slope at burst k predicting
+        full-scale wellbeing at burst k+1, controlling wellbeing at burst k.
+        One between-level regression avoids the attenuation of two-step
+        empirical-Bayes slopes used in the R approximation.
+        Values in [[ ]] are filled by R/run_mplus_check.R. Not run in the sandbox.
+
+MONTECARLO:
+  NAMES = y x wnow wnext;
+  BETWEEN = wnow wnext;
+  NOBSERVATIONS = [[nobs]];
+  NCSIZES = 1;
+  CSIZES = [[n]] (56);
+  NREPS = 200;
+  SEED = 20261030;
+  LAGGED = y(1) x(1);
+  PATMISS = y([[miss]]) x([[miss]]) wnow(0) wnext([[drop]]);
+  PATPROBS = 1;
+
+ANALYSIS:
+  TYPE = TWOLEVEL RANDOM;
+  ESTIMATOR = BAYES;
+  PROCESSORS = 2;
+  BITERATIONS = (2000);
+
+MODEL POPULATION:
+  %WITHIN%
+  s | y ON x&1;
+  y ON y&1*.30;  x ON x&1*.30;
+  y*[[wres]];  x*.55;
+  %BETWEEN%
+  y*.40;  x*.40;
+  [s*[[b]]];  s*[[vs]];
+  wnow*1;
+  wnext ON wnow*.60 s*[[g_raw]];   ! g_raw = gamma / sd_b (standardised effect gamma)
+  wnext*[[wnext_res]];
+
+MODEL:
+  %WITHIN%
+  s | y ON x&1;
+  y ON y&1;  x ON x&1;
+  %BETWEEN%
+  [s];  s;
+  wnext ON wnow s;
+
+OUTPUT: TECH1;
