@@ -1,0 +1,224 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Years and Moments — Fast clock power explorer</title>
+<meta name="description" content="Interactive explorer of the Monte Carlo power simulation for the Years and Moments fast-clock measurement-burst study.">
+<style>
+:root{
+  --bg:#f7f6f2;--surface:#ffffff;--ink:#1d2330;--muted:#5d6676;--line:#e2e0d8;
+  --accent:#2f5d8a;--accent-soft:#e3ecf5;--ok:#2e7d4f;--ok-soft:#e2f2e8;--warn:#a5631a;--warn-soft:#f8ecdc;--bad:#a83a3a;--bad-soft:#f7e2e2;
+  --s1:#9fb7cf;--s2:#2f5d8a;--s3:#c47a2c;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#14171d;--surface:#1c2028;--ink:#e7e9ee;--muted:#9aa3b2;--line:#2c323d;
+  --accent:#7fa8d4;--accent-soft:#223244;--ok:#6cc18f;--ok-soft:#1d3327;--warn:#e0a35c;--warn-soft:#3a2c1a;--bad:#e08080;--bad-soft:#3a2020;
+  --s1:#55708c;--s2:#7fa8d4;--s3:#e0a35c;}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.55 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+.wrap{max-width:980px;margin:0 auto;padding:32px 16px 56px}
+header h1{font-size:clamp(1.5rem,3.6vw,2.2rem);line-height:1.2;margin:0 0 6px;letter-spacing:-.01em}
+header .sub{color:var(--muted);margin:0 0 12px;font-size:1.05rem}
+.by{font-size:.92rem;color:var(--muted)}
+.by a{color:var(--accent)}
+.links{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px}
+.links a{font-size:.88rem;text-decoration:none;color:var(--accent);border:1px solid var(--line);background:var(--surface);padding:5px 11px;border-radius:999px}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:20px;margin-top:20px}
+h2{font-size:1.15rem;margin:0 0 4px}
+.lead{color:var(--muted);margin:0 0 14px;font-size:.95rem}
+.design svg{width:100%;height:auto;display:block}
+.facts{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin-top:14px}
+.fact{border:1px solid var(--line);border-radius:10px;padding:10px 12px}
+.fact b{display:block;font-size:1.25rem}
+.fact span{font-size:.82rem;color:var(--muted)}
+.tabs{display:flex;gap:6px;flex-wrap:wrap;border-bottom:1px solid var(--line);margin-bottom:16px}
+.tab{appearance:none;border:0;background:none;color:var(--muted);font:inherit;font-weight:600;padding:10px 12px;cursor:pointer;border-bottom:3px solid transparent;margin-bottom:-1px}
+.tab[aria-selected="true"]{color:var(--ink);border-bottom-color:var(--accent)}
+.q{font-size:.95rem;margin:0 0 16px}
+.grid{display:grid;grid-template-columns:minmax(0,300px) minmax(0,1fr);gap:24px}
+@media (max-width:760px){.grid{grid-template-columns:1fr}}
+.ctrl{margin-bottom:14px}
+.ctrl label{display:block;font-size:.82rem;font-weight:600;color:var(--muted);margin-bottom:6px;text-transform:uppercase;letter-spacing:.04em}
+.seg{display:flex;border:1px solid var(--line);border-radius:9px;overflow:hidden}
+.seg button{flex:1;appearance:none;border:0;border-right:1px solid var(--line);background:var(--surface);color:var(--ink);font:inherit;font-size:.9rem;padding:8px 4px;cursor:pointer}
+.seg button:last-child{border-right:0}
+.seg button[aria-pressed="true"]{background:var(--accent);color:#fff}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .seg button[aria-pressed="true"]{color:#0f141b}}
+.readout{border-radius:12px;padding:16px;margin-top:4px}
+.readout .big{font-size:2.6rem;font-weight:700;line-height:1;font-variant-numeric:tabular-nums}
+.readout .lbl{font-size:.85rem;margin-top:6px}
+.readout .ci{font-size:.82rem;color:var(--muted);margin-top:4px}
+.r-ok{background:var(--ok-soft)} .r-ok .big{color:var(--ok)}
+.r-warn{background:var(--warn-soft)} .r-warn .big{color:var(--warn)}
+.r-bad{background:var(--bad-soft)} .r-bad .big{color:var(--bad)}
+.extra{font-size:.85rem;color:var(--muted);margin-top:10px}
+.chart svg{width:100%;height:auto;display:block}
+.legend{display:flex;flex-wrap:wrap;gap:14px;font-size:.85rem;color:var(--muted);margin-top:6px}
+.legend i{display:inline-block;width:18px;height:3px;border-radius:2px;vertical-align:middle;margin-right:6px}
+table{width:100%;border-collapse:collapse;font-size:.88rem;font-variant-numeric:tabular-nums}
+th,td{text-align:right;padding:6px 8px;border-bottom:1px solid var(--line)}
+th:first-child,td:first-child{text-align:left}
+th{color:var(--muted);font-weight:600}
+td.hl{font-weight:700;color:var(--accent)}
+.tablewrap{overflow-x:auto;margin-top:16px}
+.notes p{font-size:.92rem;margin:0 0 10px}
+.notes ul{font-size:.92rem;margin:0 0 10px;padding-left:20px}
+footer{font-size:.82rem;color:var(--muted);margin-top:28px}
+footer a{color:var(--accent)}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header>
+  <h1>Years and Moments — Fast clock</h1>
+  <p class="sub">What happens day to day? Young adults online, moment by moment. Interactive explorer of the Monte Carlo power simulation for the measurement-burst study.</p>
+  <div class="by">Vasileios Stavropoulos · RMIT University · <a href="https://orcid.org/0000-0001-6964-4662">ORCID 0000-0001-6964-4662</a> · preliminary, v0.1.0</div>
+  <div class="links">
+    <a href="https://github.com/Vas08011980/years-and-moments-fast-clock">Code on GitHub</a>
+    <a href="https://github.com/Vas08011980/years-and-moments-fast-clock/blob/main/report.md">Full report</a>
+    <a href="https://github.com/Vas08011980/years-and-moments-fast-clock/blob/main/assumptions.csv">Assumptions and sources</a>
+  </div>
+</header>
+
+<section class="card design">
+  <h2>The design being tested</h2>
+  <p class="lead">Young adults aged 18–25 complete four 14-day bursts, six months apart, with four short prompts a day.</p>
+  <svg id="timeline" viewBox="0 0 900 150" role="img" aria-label="Timeline: four 14-day bursts at months 0, 6, 12 and 18, each with four prompts a day"></svg>
+  <div class="facts">
+    <div class="fact"><b>≈400</b><span>enrolled (≈300 retained)</span></div>
+    <div class="fact"><b>4 × 14 days</b><span>bursts, 6 months apart</span></div>
+    <div class="fact"><b>4 / day</b><span>prompts (up to 224 per person)</span></div>
+    <div class="fact"><b>150</b><span>Monte Carlo replications per cell</span></div>
+  </div>
+</section>
+
+<section class="card">
+  <h2>Explore the power results</h2>
+  <p class="lead">Choose a question and the design settings. Values are the share of 150 simulated studies in which the effect was detected (α = .05). The dashed line marks the conventional .80.</p>
+  <div class="tabs" role="tablist">
+    <button class="tab" role="tab" data-q="avg" aria-selected="true">Average daily effect</button>
+    <button class="tab" role="tab" data-q="who" aria-selected="false">For whom</button>
+    <button class="tab" role="tab" data-q="bridge" aria-selected="false">Do days add up</button>
+  </div>
+  <p class="q" id="qtext"></p>
+  <div class="grid">
+    <div>
+      <div id="controls"></div>
+      <div class="readout" id="readout"><div class="big" id="pw">–</div><div class="lbl" id="pwlbl"></div><div class="ci" id="pwci"></div></div>
+      <div class="extra" id="extra"></div>
+    </div>
+    <div class="chart">
+      <svg id="chart" viewBox="0 0 560 340" role="img" aria-label="Power by number enrolled"></svg>
+      <div class="legend" id="legend"></div>
+    </div>
+  </div>
+  <div class="tablewrap"><table id="tbl"></table></div>
+</section>
+
+<section class="card notes">
+  <h2>How the simulation was built</h2>
+  <ul>
+    <li><b>Daily questions (burst 1).</b> Each person's prompts form a time series: mood depends on the previous prompt's mood (autoregression .30) and on the previous prompt's digital exposure through a person-specific effect drawn from a normal distribution (mean = average daily effect, SD = between-person SD). Lags are used only within the same day. Intraclass correlations of mood and exposure are .40.</li>
+    <li><b>Missing prompts.</b> Each person's compliance is drawn from a beta distribution (mean = the stated compliance, SD .15), and prompts are missed at random at that rate. Residuals are normal and exposure is generated without measurement error.</li>
+    <li><b>Analysis.</b> Each simulated burst is analysed with a lagged multilevel model in <code>lme4</code> (observed person-mean centring, random effect of exposure). The between-person difference is tested with a likelihood-ratio test of the random-slope variance (mixture &chi;&sup2;). Mplus latent-centred DSEM Monte Carlo templates are included to confirm key cells.</li>
+    <li><b>Bridge question.</b> Four bursts with retention of 100/92/84/75%; person effects correlate .70 across bursts; next-burst wellbeing = .60 &times; current wellbeing + bridge effect &times; standardised person effect. Each person's effect is estimated per burst (empirical Bayes) and entered into a multilevel regression of next-burst wellbeing (compliance 67%, average daily effect .10).</li>
+    <li><b>Sources.</b> Effect sizes and compliance come from published studies (Beyens et al., 2020; Wen et al., 2017). The bridge effect has no direct published anchor, so a range (.10&ndash;.30) is simulated. Each cell uses 150 replications; intervals are &plusmn;1.96 Monte Carlo standard errors.</li>
+  </ul>
+  <p>Pilot estimates (months 7–12) will replace these design assumptions before the final sample size is fixed.</p>
+</section>
+
+<footer>
+  <p>Results are copied from <code>results/power_aim2.csv</code> and <code>results/power_aim3.csv</code> in this repository. Code and code write-up were prepared with assistance from Claude (Anthropic); the study design, assumptions and interpretation are the author's. MIT licence. Cite via <a href="https://github.com/Vas08011980/years-and-moments-fast-clock/blob/main/CITATION.cff">CITATION.cff</a>.</p>
+</footer>
+</div>
+
+<script>
+// Columns a2: n, compliance, b (average daily effect), sd_b (between-person SD), power_fixed, power_slope_var, obs_per_person
+// Columns a3: n, sd_b, gamma (bridge effect), power_bridge, mean_gamma_hat, retained_at_burst4 (compliance .67, b .10)
+const D={"a2":[[250.0,0.6,0.05,0.1,0.807,0.453,16.1],[400.0,0.6,0.05,0.1,0.953,0.653,16.1],[550.0,0.6,0.05,0.1,0.98,0.76,16.2],[250.0,0.67,0.05,0.1,0.887,0.687,19.9],[400.0,0.67,0.05,0.1,0.987,0.867,19.9],[550.0,0.67,0.05,0.1,1.0,0.927,19.8],[250.0,0.78,0.05,0.1,0.953,0.86,26.4],[400.0,0.78,0.05,0.1,0.987,0.96,26.5],[550.0,0.78,0.05,0.1,1.0,1.0,26.5],[250.0,0.6,0.1,0.1,1.0,0.5,16.1],[400.0,0.6,0.1,0.1,1.0,0.727,16.2],[550.0,0.6,0.1,0.1,1.0,0.813,16.2],[250.0,0.67,0.1,0.1,1.0,0.593,19.9],[400.0,0.67,0.1,0.1,1.0,0.84,19.8],[550.0,0.67,0.1,0.1,1.0,0.9,19.9],[250.0,0.78,0.1,0.1,1.0,0.813,26.5],[400.0,0.78,0.1,0.1,1.0,0.973,26.6],[550.0,0.78,0.1,0.1,1.0,1.0,26.5],[250.0,0.6,0.15,0.1,1.0,0.553,16.2],[400.0,0.6,0.15,0.1,1.0,0.727,16.1],[550.0,0.6,0.15,0.1,1.0,0.807,16.1],[250.0,0.67,0.15,0.1,1.0,0.66,19.8],[400.0,0.67,0.15,0.1,1.0,0.813,19.9],[550.0,0.67,0.15,0.1,1.0,0.927,19.8],[250.0,0.78,0.15,0.1,1.0,0.827,26.5],[400.0,0.78,0.15,0.1,1.0,0.953,26.5],[550.0,0.78,0.15,0.1,1.0,0.993,26.5],[250.0,0.6,0.05,0.2,0.667,1.0,16.1],[400.0,0.6,0.05,0.2,0.827,1.0,16.1],[550.0,0.6,0.05,0.2,0.96,1.0,16.1],[250.0,0.67,0.05,0.2,0.787,1.0,19.7],[400.0,0.67,0.05,0.2,0.907,1.0,19.8],[550.0,0.67,0.05,0.2,0.973,1.0,19.9],[250.0,0.78,0.05,0.2,0.827,1.0,26.5],[400.0,0.78,0.05,0.2,0.973,1.0,26.5],[550.0,0.78,0.05,0.2,0.993,1.0,26.5],[250.0,0.6,0.1,0.2,1.0,1.0,16.1],[400.0,0.6,0.1,0.2,1.0,1.0,16.1],[550.0,0.6,0.1,0.2,1.0,1.0,16.1],[250.0,0.67,0.1,0.2,1.0,1.0,19.8],[400.0,0.67,0.1,0.2,1.0,1.0,19.8],[550.0,0.67,0.1,0.2,1.0,1.0,19.8],[250.0,0.78,0.1,0.2,1.0,1.0,26.5],[400.0,0.78,0.1,0.2,1.0,1.0,26.5],[550.0,0.78,0.1,0.2,1.0,1.0,26.5],[250.0,0.6,0.15,0.2,1.0,1.0,16.1],[400.0,0.6,0.15,0.2,1.0,1.0,16.1],[550.0,0.6,0.15,0.2,1.0,1.0,16.1],[250.0,0.67,0.15,0.2,1.0,1.0,19.8],[400.0,0.67,0.15,0.2,1.0,1.0,19.9],[550.0,0.67,0.15,0.2,1.0,1.0,19.8],[250.0,0.78,0.15,0.2,1.0,1.0,26.6],[400.0,0.78,0.15,0.2,1.0,1.0,26.5],[550.0,0.78,0.15,0.2,1.0,1.0,26.5]],"a3":[[250.0,0.1,0.1,0.16,0.031,187.5],[400.0,0.1,0.1,0.333,0.037,299.4],[550.0,0.1,0.1,0.467,0.04,413.9],[250.0,0.2,0.1,0.527,0.065,187.5],[400.0,0.2,0.1,0.727,0.065,298.2],[550.0,0.2,0.1,0.853,0.063,412.7],[250.0,0.1,0.2,0.58,0.068,187.5],[400.0,0.1,0.2,0.833,0.07,299.8],[550.0,0.1,0.2,0.88,0.072,411.5],[250.0,0.2,0.2,0.98,0.127,187.2],[400.0,0.2,0.2,1.0,0.125,300.3],[550.0,0.2,0.2,1.0,0.129,413.0],[250.0,0.1,0.3,0.82,0.093,187.5],[400.0,0.1,0.3,0.98,0.1,300.9],[550.0,0.1,0.3,1.0,0.103,410.9],[250.0,0.2,0.3,1.0,0.185,187.0],[400.0,0.2,0.3,1.0,0.186,299.6],[550.0,0.2,0.3,1.0,0.189,412.6]]};
+const N=[250,400,550];
+const fmt=v=>v.toFixed(2).replace(/^0/,'');
+const state={q:'avg',n:400,comp:0.67,b:0.05,sd:0.1,g:0.2};
+const Q={
+  avg:{text:'Does digital exposure (e.g., late-night AI use) carry over into later mood, on average across young people?',
+       ctrls:[['comp','Compliance',[0.6,0.67,0.78],v=>Math.round(v*100)+'%'],['b','Average daily effect',[0.05,0.1,0.15],fmt],['sd','Between-person SD of the effect',[0.1,0.2],fmt]],
+       lines:'b',lineLabel:v=>'effect '+fmt(v)},
+  who:{text:'Does the daily effect differ between young people (is the between-person variance of the effect detectable)?',
+       ctrls:[['comp','Compliance',[0.6,0.67,0.78],v=>Math.round(v*100)+'%'],['b','Average daily effect',[0.05,0.1,0.15],fmt],['sd','Between-person SD of the effect',[0.1,0.2],fmt]],
+       lines:'comp',lineLabel:v=>Math.round(v*100)+'% compliance'},
+  bridge:{text:'Does a young person’s daily effect at one burst predict their wellbeing six months later? (compliance 67%, average daily effect .10)',
+       ctrls:[['g','Bridge effect',[0.1,0.2,0.3],fmt],['sd','Between-person SD of the effect',[0.1,0.2],fmt]],
+       lines:'g',lineLabel:v=>'bridge '+fmt(v)}
+};
+const near=(a,b)=>Math.abs(a-b)<1e-9;
+function row(s){
+  if(s.q==='bridge'){const r=D.a3.find(r=>r[0]===s.n&&near(r[1],s.sd)&&near(r[2],s.g));return r&&{p:r[3],ghat:r[4],ret:r[5]};}
+  const r=D.a2.find(r=>r[0]===s.n&&near(r[1],s.comp)&&near(r[2],s.b)&&near(r[3],s.sd));
+  return r&&{p:s.q==='avg'?r[4]:r[5],obs:r[6]};
+}
+function controls(){
+  const el=document.getElementById('controls');el.innerHTML='';
+  const all=[['n','Number enrolled',N,v=>String(v)],...Q[state.q].ctrls];
+  for(const [k,lab,vals,f] of all){
+    const d=document.createElement('div');d.className='ctrl';
+    d.innerHTML='<label>'+lab+'</label>';
+    const seg=document.createElement('div');seg.className='seg';
+    for(const v of vals){const b=document.createElement('button');b.textContent=f(v);b.setAttribute('aria-pressed',near(state[k],v));
+      b.onclick=()=>{state[k]=v;render();};seg.appendChild(b);}
+    d.appendChild(seg);el.appendChild(d);
+  }
+}
+function readout(){
+  const r=row(state);const p=r.p;const se=Math.sqrt(Math.max(p*(1-p),1e-9)/150);
+  document.getElementById('pw').textContent=fmt(p);
+  const box=document.getElementById('readout');
+  box.className='readout '+(p>=0.8?'r-ok':p>=0.6?'r-warn':'r-bad');
+  document.getElementById('pwlbl').textContent=p>=0.8?'Adequate power (≥ .80)':p>=0.6?'Below .80 — report as an estimate with its interval':'Underpowered at this setting';
+  document.getElementById('pwci').textContent=p>=0.999?'Detected in all 150 replications':'Monte Carlo interval '+fmt(Math.max(0,p-1.96*se))+'–'+fmt(Math.min(1,p+1.96*se));
+  const ex=document.getElementById('extra');
+  ex.textContent=state.q==='bridge'
+    ? 'Mean estimated bridge coefficient: '+r.ghat.toFixed(3)+' · retained at burst 4: ≈'+Math.round(r.ret)+' of '+state.n
+    : 'Usable within-day lagged pairs per person in burst 1: ≈'+r.obs.toFixed(1)+' of 42';
+}
+function chart(){
+  const svg=document.getElementById('chart');const W=560,H=340,m={l:48,r:16,t:16,b:44};
+  const x=n=>m.l+(n-250)/300*(W-m.l-m.r);const y=p=>m.t+(1-p)*(H-m.t-m.b);
+  let s='';
+  for(const t of [0,.2,.4,.6,.8,1]){s+=`<line x1="${m.l}" x2="${W-m.r}" y1="${y(t)}" y2="${y(t)}" stroke="var(--line)"/>`;
+    s+=`<text x="${m.l-8}" y="${y(t)+4}" text-anchor="end" font-size="12" fill="var(--muted)">${t===0?'0':t===1?'1.00':fmt(t)}</text>`;}
+  s+=`<line x1="${m.l}" x2="${W-m.r}" y1="${y(.8)}" y2="${y(.8)}" stroke="var(--muted)" stroke-dasharray="5 4"/>`;
+  for(const n of N){s+=`<text x="${x(n)}" y="${H-m.b+20}" text-anchor="middle" font-size="12" fill="var(--muted)">${n}</text>`;}
+  s+=`<text x="${(m.l+W-m.r)/2}" y="${H-6}" text-anchor="middle" font-size="12" fill="var(--muted)">Number enrolled</text>`;
+  const q=Q[state.q];const key=q.lines;const vals=q.ctrls.find(c=>c[0]===key)[2];const cols=['var(--s1)','var(--s2)','var(--s3)'];
+  let leg='';
+  vals.forEach((v,i)=>{
+    const pts=N.map(n=>{const r=row({...state,n,[key]:v});return [x(n),y(r.p)];});
+    const sel=near(state[key],v);
+    s+=`<polyline points="${pts.map(p=>p.join(',')).join(' ')}" fill="none" stroke="${cols[i]}" stroke-width="${sel?3.5:2}" opacity="${sel?1:.55}"/>`;
+    pts.forEach((p,j)=>{const isSel=sel&&N[j]===state.n;s+=`<circle cx="${p[0]}" cy="${p[1]}" r="${isSel?7:4}" fill="${isSel?cols[i]:'var(--surface)'}" stroke="${cols[i]}" stroke-width="2"/>`;});
+    leg+=`<span><i style="background:${cols[i]}"></i>${q.lineLabel(v)}${sel?' (selected)':''}</span>`;
+  });
+  svg.innerHTML=s;document.getElementById('legend').innerHTML=leg;
+}
+function table(){
+  const q=Q[state.q];const key=q.lines;const vals=q.ctrls.find(c=>c[0]===key)[2];
+  let h='<thead><tr><th>'+q.ctrls.find(c=>c[0]===key)[1]+'</th>'+N.map(n=>'<th>N = '+n+'</th>').join('')+'</tr></thead><tbody>';
+  for(const v of vals){h+='<tr><td>'+q.ctrls.find(c=>c[0]===key)[3](v)+'</td>'+N.map(n=>{const r=row({...state,n,[key]:v});const hl=near(state[key],v)&&n===state.n;return '<td'+(hl?' class="hl"':'')+'>'+fmt(r.p)+'</td>';}).join('')+'</tr>';}
+  document.getElementById('tbl').innerHTML=h+'</tbody>';
+}
+function render(){document.getElementById('qtext').textContent=Q[state.q].text;controls();readout();chart();table();}
+document.querySelectorAll('.tab').forEach(t=>t.onclick=()=>{document.querySelectorAll('.tab').forEach(o=>o.setAttribute('aria-selected',o===t));state.q=t.dataset.q;render();});
+(function timeline(){
+  const svg=document.getElementById('timeline');let s='';const x0=40,x1=860;
+  s+=`<line x1="${20+75}" x2="${880-75}" y1="110" y2="110" stroke="var(--line)" stroke-width="2"/>`;
+  [0,6,12,18].forEach((mth,i)=>{const w=150,left=20+i*((900-40-w)/3),cx=left+w/2;
+    for(let d=0;d<14;d++)for(let p=0;p<4;p++){s+=`<rect x="${left+d*(w/14)+1}" y="${30+p*14}" width="${w/14-2}" height="11" rx="2" fill="var(--accent)" opacity="${.35+.15*p}"/>`;}
+    s+=`<circle cx="${cx}" cy="110" r="6" fill="var(--accent)"/><text x="${cx}" y="135" text-anchor="middle" font-size="13" fill="var(--muted)">Burst ${i+1} · month ${mth}</text>`;
+    s+=`<text x="${left}" y="20" font-size="11" fill="var(--muted)">14 days × 4 prompts</text>`;});
+  svg.innerHTML=s;
+})();
+render();
+</script>
+</body>
+</html>
