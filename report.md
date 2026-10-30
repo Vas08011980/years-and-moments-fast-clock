@@ -63,14 +63,14 @@ Two-step estimates were strongly attenuated (e.g., a true effect of .20 was esti
 
 ## 5. Decision
 
-- **N ≈ 400 enrolled is adequate for Aim 2:** the average daily effect, even at the small end of the literature, and Beyens-level differences between young people.
-- **Aim 3 is adequately powered for bridge effects ≥ .20, not for effects of .10** unless heterogeneity is large. The bridge test is therefore preregistered as confirmatory for effects ≥ .20, with smaller effects reported as estimates with intervals.
+- **N ≈ 400 enrolled is adequate for the two daily questions:** the average daily effect, even at the small end of the literature, and Beyens-level differences between young people.
+- **The bridge question is adequately powered for bridge effects ≥ .20, not for effects of .10** unless heterogeneity is large. The bridge test is therefore preregistered as confirmatory for effects ≥ .20, with smaller effects reported as estimates with intervals.
 - **Design levers if the pilot shows lower heterogeneity or compliance:** more prompts per day with within-day lags, longer bursts, or enrolling ~550, which raises bridge power for a .10 effect to .47–.85.
 - **In months 7–12**, pilot estimates (compliance, autoregression, ICC, heterogeneity) replace the design assumptions and the grid is re-run in Mplus DSEM before the final N is fixed.
 
 ## 6. Limitations
 
-The data-generating model is idealised: normal errors, exposure measured without error, missingness at random, and a correctly specified model. Real data are likely to give lower power, so these results are an upper bound for given effect sizes. The bridge effect has no direct empirical anchor. The lme4 approximation uses observed rather than latent person-mean centring.
+Power is estimated for simulated data with normally distributed residuals, exposure measured without error, and prompts missed at random (each person's compliance drawn from a beta distribution), analysed with a model that matches the generating structure. Measurement error in exposure, non-random missingness or misspecification in real data would reduce power. The bridge effect has no direct empirical anchor and is simulated as a range (.10–.30). The lme4 models use observed rather than latent person-mean centring; the Mplus DSEM templates provide the latent-centred check. In the bridge analysis, each person's daily effect is estimated per burst (empirical Bayes) before entering the regression, so the estimated bridge coefficient is smaller than the generating value (about .07 for a generating value of .20 at N = 400, SD .10); bridge power refers to detecting the effect, not to recovering its size.
 
 ## References
 
